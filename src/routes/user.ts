@@ -83,7 +83,7 @@ user.delete('/friend', needAuth, (req, res) => {
 /*
  * Route pour get toutes les info du user
  */
-user.get('/:id', (req, res) => {
+user.get('/:id', needAuth, (req, res) => {
   Users.findById(req.params.id)
     .populate('friends', '_id firstName lastName')
     .populate('conversations', '-__v')
@@ -99,6 +99,24 @@ user.get('/:id', (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
+        error: 'MongoDB error',
+        err,
+      });
+    });
+});
+
+/*
+ *
+ */
+user.delete('/', needAuth, (req, res) => {
+  Users.findOneAndDelete({ username: res.locals.username })
+    .then((doc) => {
+      res.status(200).send({
+        status: 'Deleted',
+      });
+    })
+    .catch((err) => {
+      res.status(200).send({
         error: 'MongoDB error',
         err,
       });
