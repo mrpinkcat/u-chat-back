@@ -9,7 +9,7 @@ const user = express.Router();
  */
 user.get('/friends', needAuth, (req, res) => {
   Users.findOne({ username: res.locals.username })
-  .populate('friends', '_id firstName lastName')
+    .populate('friends', '_id firstName lastName')
     .then((doc) => {
       if (doc) {
         res.status(200).send(doc.toJSON().friends);
