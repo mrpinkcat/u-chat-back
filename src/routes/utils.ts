@@ -2,15 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import Users from '../models/Users';
 
 const needAuth = (req: Request, res: Response, next: NextFunction) => {
-  console.log('need auth');
   if (!req.headers.authorization || req.headers.authorization.slice(0, 7) !== 'Bearer ') {
     res.status(403).json({ error: 'No bearer credentials sent' });
   } else {
-    console.log(getTokenFromAuthHeader(req.headers.authorization));
     Users.findOne({ token: getTokenFromAuthHeader(req.headers.authorization)})
     .then((doc) => {
       if (doc) {
-        console.log(doc.toJSON());
         res.locals._id = doc.toJSON()._id;
         res.locals.username = doc.toJSON().username;
         if (doc.toJSON().firstName) {
