@@ -10,30 +10,36 @@ const schema = new Schema({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
   },
   firstName: {
     type: String,
     required: true,
-    unique: false,
   },
   lastName: {
     type: String,
     required: true,
-    unique: false,
   },
   password: {
     type: String,
     required: true,
-    unique: false,
   },
   friends: [{
     type: Types.ObjectId,
     ref: 'User',
   }],
-  convs: [{
+  conversations: [{
     type: Types.ObjectId,
     ref: 'Conv',
   }],
+  // created_at: {
+  //   type: Date,
+  // },
+  // ObjectId("5349b4ddd2781d08c09890f4").getTimestamp()
+  last_login: {
+    type: Date,
+    required: true,
+  },
 });
 
 export default model('User', schema);
