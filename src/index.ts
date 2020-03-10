@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose, { connection } from 'mongoose';
 import socketIo from 'socket.io';
 import http from 'http';
+import morgan from 'morgan';
 
 
 const io = socketIo(http);
@@ -27,6 +28,7 @@ const app = express();
 
 // parse body application/json
 app.use(bodyParser.json());
+app.use(morgan('combined'));
 
 // Use des routes
 app.use('/user', user);
