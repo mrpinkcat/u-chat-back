@@ -6,24 +6,24 @@ const schema = new Schema({
     required: true,
     unique: false,
   },
-  sender: [{
+  // created_at: {
+  //   type: Date,
+  //   required: true,
+  //   unique: false,
+  // },
+  // ObjectId("5349b4ddd2781d08c09890f4").getTimestamp()
+  sender: {
     type: Types.ObjectId,
     required: true,
     unique: false,
     ref: 'User'
-  }],
-  reciver: [{
-    type: Types.ObjectId,
-    required: true,
-    unique: false,
-    ref: 'User'
-  }],
-  conv: [{
+  },
+  conv: {
     type: Types.ObjectId,
     required: true,
     unique: false,
     ref: 'Conv'
-  }],
+  },
 });
 
 export default model('Message', schema);
