@@ -36,10 +36,12 @@ const schema = new Schema({
   //   type: Date,
   // },
   // ObjectId("5349b4ddd2781d08c09890f4").getTimestamp()
-  last_login: {
+  lastLogin: {
     type: Date,
     required: true,
   },
 });
+
+schema.index({ firstName: 'text', lastName: 'text' }, { default_language: 'french' });
 
 export default model('User', schema);
