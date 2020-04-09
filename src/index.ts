@@ -32,7 +32,7 @@ app.use(morgan('combined'));
 
 // Use des routes
 app.use('/user', user);
-app.use('/conv', conv);
+app.use('/conversation', conv);
 app.use('/auth', auth);
 
 /* Route de HeartBeat */
