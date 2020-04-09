@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import uniqid from 'uniqid';
+import { Types } from 'mongoose'
 
 import Users from './../models/Users';
 
@@ -14,10 +15,12 @@ auth.post('/login', (req, res) => {
   if (req.body.username && req.body.password) {
     const username = req.body.username;
     const password = req.body.password;
-    Users.findOne({ username })
+    Users.findOneAndUpdate({ username }, { lastLogin: new Date() }, { new: true })
+    .populate('friends', 'username firstName lastName -_id')
+    .select('-conversations')
     .then((user) => {
       if (!user) {
-        res.status(400).send({ 
+        res.status(404).send({ 
           error: 'User not found.',
         });
       } else {
@@ -26,6 +29,12 @@ auth.post('/login', (req, res) => {
           if (same) {
             res.status(200).send({
               token: user.toJSON().token,
+              username: user.toJSON().username,
+              firstName: user.toJSON().firstName,
+              lastName: user.toJSON().lastName,
+              friends: user.toJSON().friends,
+              lastLogin: user.toJSON().lastLogin,
+              createdAt: Types.ObjectId(user._id).getTimestamp(),
             });
           } else {
             res.status(400).send({
@@ -56,9 +65,6 @@ auth.post('/login', (req, res) => {
 
 /* Création de compte */
 auth.post('/register', (req, res) => {
-  console.log('/register');
-  console.log(req.body);
-
   /* Check les fields du le body */
   if (req.body.username && req.body.password && req.body.firstName && req.body.lastName) {
     const username: string = req.body.username;
@@ -77,12 +83,12 @@ auth.post('/register', (req, res) => {
         lastName,
         password: encryptedPassword,
         token,
+        lastLogin: new Date(),
       })
       .save()
       .then((doc) => {
         res.status(200).send({
           status: 'User created.',
-          token: doc.toJSON().token,
         });
       })
       .catch((err) => {
