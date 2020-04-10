@@ -8,6 +8,7 @@ const needAuth = (req: Request, res: Response, next: NextFunction) => {
     Users.findOne({ token: getTokenFromAuthHeader(req.headers.authorization)})
     .then((doc) => {
       if (doc) {
+        res.locals.userDoc = doc;
         res.locals._id = doc.toJSON()._id;
         res.locals.username = doc.toJSON().username;
         if (doc.toJSON().firstName) {
