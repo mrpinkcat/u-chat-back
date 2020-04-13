@@ -16,13 +16,15 @@ const schema = new Schema({
     type: Types.ObjectId,
     required: true,
     unique: false,
-    ref: 'User'
+    ref: 'User',
+    select: 'username',
   },
-  conv: {
+  conversation: {
     type: Types.ObjectId,
     required: true,
     unique: false,
-    ref: 'Conv'
+    ref: 'Conv',
+    select: '_id',
   },
 });
 

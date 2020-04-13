@@ -30,7 +30,7 @@ const schema = new Schema({
   }],
   conversations: [{
     type: Types.ObjectId,
-    ref: 'Conv',
+    ref: 'Conversation',
   }],
   // created_at: {
   //   type: Date,

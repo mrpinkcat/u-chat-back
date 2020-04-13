@@ -6,9 +6,6 @@ import socketIo from 'socket.io';
 import http from 'http';
 import morgan from 'morgan';
 
-
-const io = socketIo(http);
-
 dotenv.config();
 
 import auth from './routes/auth';
@@ -26,9 +23,13 @@ mongoose.set('useUnifiedTopology', true);
 
 const app = express();
 
+const httpServer = http.createServer(app);
+
+const io = socketIo(httpServer);
+
 // parse body application/json
 app.use(bodyParser.json());
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 // Use des routes
 app.use('/user', user);
@@ -42,12 +43,19 @@ app.get('/heartbeat', (req, res) => res.sendStatus(200));
 mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ds057538.mlab.com:57538/u-chat`)
 .then(() => {
   console.log('Connected to database');
-  io.on('connection', (socket) => {
-    console.log('User connected');
-  })
   /* Lancement de l'app */
-  app.listen(port, () => {
+  httpServer.listen(port, () => {
     console.log(`App started on port :${port}`);
+
+    io.on('connection', (socket) => {
+      console.log('User connected');
+      socket.on('disconnect', () => {
+        console.log('User disconnected');
+      });
+      socket.on('chatMessage', (message: string) => {
+        console.log(`Message : ${message}`);
+      });
+    });
   });
 })
 .catch((err) => {
