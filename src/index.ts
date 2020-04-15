@@ -1,16 +1,19 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import mongoose, { connection } from 'mongoose';
+import mongoose from 'mongoose';
 import socketIo from 'socket.io';
 import http from 'http';
-import morgan from 'morgan';
+// import morgan from 'morgan';
+import cors from 'cors';
 
 dotenv.config();
 
 import auth from './routes/auth';
 import conv from './routes/conv';
 import user from './routes/user';
+
+import socketRoutes from './socket.io/index';
 
 /* Définition du port d'écoute de l'app */
 const port = process.env.PORT || 3000;
@@ -25,10 +28,13 @@ const app = express();
 
 const httpServer = http.createServer(app);
 
-const io = socketIo(httpServer);
+export const io = socketIo(httpServer);
 
 // parse body application/json
 app.use(bodyParser.json());
+app.use(cors({
+  origin: '*',
+}));
 // app.use(morgan('combined'));
 
 // Use des routes
@@ -47,15 +53,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWO
   httpServer.listen(port, () => {
     console.log(`App started on port :${port}`);
 
-    io.on('connection', (socket) => {
-      console.log('User connected');
-      socket.on('disconnect', () => {
-        console.log('User disconnected');
-      });
-      socket.on('chatMessage', (message: string) => {
-        console.log(`Message : ${message}`);
-      });
-    });
+    io.on('connection', socketRoutes);
   });
 })
 .catch((err) => {

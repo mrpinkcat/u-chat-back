@@ -17,7 +17,7 @@ const schema = new Schema({
     required: true,
     unique: false,
     ref: 'User',
-    select: 'username',
+    select: '-friends -conversations -_id -firstName -lastName -password -token -lastLogin -__v',
   },
   conversation: {
     type: Types.ObjectId,

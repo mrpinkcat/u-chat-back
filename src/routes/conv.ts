@@ -35,8 +35,17 @@ conv.get('/', needAuth, (req, res) => {
 conv.get('/:id', (req, res) => {
   if (req.params.id) {
     Conversations.findById(req.params.id)
-    .populate('members')
-    // .populate('messages')
+    .populate('members', '-_id -password -__v -token -friends -conversations')
+    .populate({
+      path: 'messages',
+      select: '-_id -conversation -__v',
+      options: { sort: { $natural: -1 }},
+      limit: 20,
+      populate: {
+        path: 'sender',
+        select: '-friends -conversations -_id -firstName -lastName -password -token -lastLogin -__v',
+      },
+    })
       .then((doc) => {
         if (doc) {
           res.status(200).send(doc.toJSON());
